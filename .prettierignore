@@ -1,0 +1,12 @@
+.astro/
+.npm-cache/
+.playwright-browsers/
+.playwright-cli/
+.playwright-data/
+.vercel/
+dist/
+node_modules/
+output/
+AGENTS.md
+DEVELOPMENT_STEPS.md
+package-lock.json

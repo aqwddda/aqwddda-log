@@ -1,0 +1,75 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { siteConfig } from "../config";
+---
+
+<BaseLayout
+  title="FAQ"
+  description="About Aqwddda, the research interests behind this blog, and common questions."
+>
+  <h1 class="page-heading">FAQ / About</h1>
+  <p class="page-intro">
+    Background, research interests, and the purpose of this long-term technical notebook.
+  </p>
+
+  <div class="about-content">
+    <section>
+      <h2>Who writes this blog?</h2>
+      <p>
+        I am Aqwddda. I use this site to turn experiments, implementation notes, and
+        reading into durable technical records.
+      </p>
+    </section>
+
+    <section>
+      <h2>What are the main research interests?</h2>
+      <p>
+        This blog focuses on recommendation systems, RAG, search, information retrieval,
+        evaluation, and practical AI engineering.
+      </p>
+    </section>
+
+    <section>
+      <h2>How can I get in touch?</h2>
+      <p>
+        The public contact point is
+        <a href={siteConfig.githubProfileUrl} target="_blank" rel="noreferrer">
+          GitHub
+        </a>.
+      </p>
+    </section>
+
+    <section>
+      <h2>Are posts final?</h2>
+      <p>
+        No. Articles may be revised when new evidence, implementation experience, or
+        clearer explanations become available.
+      </p>
+    </section>
+
+    <section>
+      <h2>Can I reuse the code?</h2>
+      <p>
+        Check the repository license and the context around each example before reuse.
+        Small snippets are educational examples and may omit production concerns.
+      </p>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .about-content section {
+    padding: 1.35rem 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .about-content h2 {
+    margin: 0 0 0.45rem;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.35rem;
+  }
+
+  .about-content p {
+    margin: 0;
+  }
+</style>

@@ -1,0 +1,56 @@
+<button
+  class="theme-toggle"
+  type="button"
+  data-theme-toggle
+  aria-label="Switch color theme"
+  title="Switch color theme"
+>
+  <span aria-hidden="true" data-theme-icon>◐</span>
+</button>
+
+<script>
+  function updateThemeButtons() {
+    const isDark = document.documentElement.dataset.theme === "dark";
+    const icon = isDark ? "☀" : "☾";
+    const label = isDark ? "Use light theme" : "Use dark theme";
+
+    document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
+      button.setAttribute("aria-label", label);
+      button.setAttribute("title", label);
+      const iconElement = button.querySelector("[data-theme-icon]");
+      if (iconElement) iconElement.textContent = icon;
+    });
+  }
+
+  document.querySelectorAll("[data-theme-toggle]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const currentTheme = document.documentElement.dataset.theme;
+      const nextTheme = currentTheme === "dark" ? "light" : "dark";
+      document.documentElement.dataset.theme = nextTheme;
+      localStorage.setItem("theme", nextTheme);
+      updateThemeButtons();
+    });
+  });
+
+  updateThemeButtons();
+</script>
+
+<style>
+  .theme-toggle {
+    display: inline-grid;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    place-items: center;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  .theme-toggle:hover {
+    border-color: var(--muted);
+    background: var(--surface);
+  }
+</style>

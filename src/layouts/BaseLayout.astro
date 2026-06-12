@@ -1,0 +1,141 @@
+---
+import "katex/dist/katex.min.css";
+import "../styles/global.css";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import { siteConfig } from "../config";
+
+interface Props {
+  title?: string;
+  description?: string;
+  wide?: boolean;
+  type?: "website" | "article";
+}
+
+const {
+  title = siteConfig.name,
+  description = siteConfig.description,
+  wide = false,
+  type = "website",
+} = Astro.props;
+
+const pageTitle = title === siteConfig.name ? title : `${title} | ${siteConfig.name}`;
+const canonicalUrl = new URL(Astro.url.pathname, siteConfig.url);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#f4f4f3" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#17191c" media="(prefers-color-scheme: dark)" />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={`${siteConfig.name} RSS`}
+      href="/rss.xml"
+    />
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content={siteConfig.name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    <title>{pageTitle}</title>
+    <style is:inline>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        min-height: 100%;
+      }
+
+      html {
+        scrollbar-gutter: stable;
+      }
+
+      body {
+        display: flex;
+        min-height: 100vh;
+        margin: 0;
+        flex-direction: column;
+      }
+
+      .site-shell {
+        width: min(calc(100% - 2.5rem), 1040px);
+        margin: 0 auto;
+      }
+
+      .content-column {
+        width: min(100%, 760px);
+        margin: 0 auto;
+      }
+
+      #main-content {
+        flex: 1;
+      }
+
+      .page-content {
+        padding: 2.25rem 0 5rem;
+      }
+
+      .page-intro {
+        max-width: 100%;
+      }
+
+      .page-heading {
+        margin: 0 0 0.65rem;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 35px;
+        line-height: 1.18;
+        letter-spacing: -0.02em;
+      }
+
+      @media (max-width: 640px) {
+        .site-shell {
+          width: min(calc(100% - 1.5rem), 1040px);
+        }
+
+        .page-content {
+          padding: 1.75rem 0 4rem;
+        }
+
+        .page-heading {
+          font-size: 2rem;
+        }
+      }
+    </style>
+    <script is:inline>
+      (() => {
+        const savedTheme = localStorage.getItem("theme");
+        const systemIsDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        document.documentElement.dataset.theme =
+          savedTheme === "light" || savedTheme === "dark"
+            ? savedTheme
+            : systemIsDark
+              ? "dark"
+              : "light";
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <Header />
+    <main
+      id="main-content"
+      class:list={["site-shell", "page-content", !wide && "content-column"]}
+    >
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

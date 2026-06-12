@@ -1,0 +1,13 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SearchBox from "../components/SearchBox.astro";
+---
+
+<BaseLayout title="Search" description="Search all published posts on Aqwddda Log.">
+  <h1 class="page-heading">Search</h1>
+  <p class="page-intro">
+    Search locally across titles, summaries, tags, and article content. No query is sent
+    to an external service.
+  </p>
+  <SearchBox />
+</BaseLayout>

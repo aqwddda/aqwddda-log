@@ -1,0 +1,89 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { formatDate, getPostUrl, getPosts, groupPostsByYear } from "../utils/posts";
+
+const posts = await getPosts();
+const yearlyPosts = groupPostsByYear(posts);
+---
+
+<BaseLayout title="Archive" description="A year-by-year archive of Aqwddda Log.">
+  <h1 class="page-heading">Archive</h1>
+  <p class="page-intro">A chronological index of every published article.</p>
+
+  {
+    yearlyPosts.length > 0 ? (
+      yearlyPosts.map(([year, postsInYear]) => (
+        <section class="archive-year" aria-labelledby={`year-${year}`}>
+          <h2 id={`year-${year}`}>{year}</h2>
+          <ol>
+            {postsInYear.map((post) => (
+              <li>
+                <time datetime={post.data.date.toISOString()}>
+                  {formatDate(post.data.date)}
+                </time>
+                <a href={getPostUrl(post)}>{post.data.title}</a>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ))
+    ) : (
+      <p class="empty-state">No published posts yet.</p>
+    )
+  }
+</BaseLayout>
+
+<style>
+  .archive-year {
+    display: grid;
+    padding: 1.25rem 0 2rem;
+    border-top: 1px solid var(--border);
+    grid-template-columns: 6rem 1fr;
+    gap: 1.5rem;
+  }
+
+  .archive-year h2 {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.55rem;
+  }
+
+  .archive-year ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .archive-year li {
+    display: grid;
+    padding: 0.5rem 0;
+    grid-template-columns: 8rem 1fr;
+    gap: 1rem;
+  }
+
+  .archive-year time {
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+
+  .archive-year a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .archive-year a:hover {
+    color: var(--accent);
+  }
+
+  @media (max-width: 560px) {
+    .archive-year {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+
+    .archive-year li {
+      grid-template-columns: 1fr;
+      gap: 0;
+    }
+  }
+</style>

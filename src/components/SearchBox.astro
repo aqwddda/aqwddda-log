@@ -1,0 +1,172 @@
+<div class="search-box">
+  <label for="site-search">Search the blog</label>
+  <input
+    id="site-search"
+    type="search"
+    placeholder="Title, summary, tag, or keyword"
+    autocomplete="off"
+    data-search-input
+  />
+  <p class="search-status" data-search-status aria-live="polite">
+    Start typing to search all published posts.
+  </p>
+  <div class="search-results" data-search-results></div>
+</div>
+
+<script>
+  interface SearchItem {
+    title: string;
+    description: string;
+    tags: string[];
+    body: string;
+    date: string;
+    url: string;
+  }
+
+  const input = document.querySelector<HTMLInputElement>("[data-search-input]");
+  const status = document.querySelector<HTMLElement>("[data-search-status]");
+  const results = document.querySelector<HTMLElement>("[data-search-results]");
+  let searchItems: SearchItem[] = [];
+
+  function scoreItem(item: SearchItem, query: string): number {
+    const title = item.title.toLowerCase();
+    const description = item.description.toLowerCase();
+    const tags = item.tags.join(" ").toLowerCase();
+    const body = item.body.toLowerCase();
+    let score = 0;
+
+    if (title.includes(query)) score += 8;
+    if (tags.includes(query)) score += 5;
+    if (description.includes(query)) score += 3;
+    if (body.includes(query)) score += 1;
+
+    return score;
+  }
+
+  function renderResults(items: SearchItem[]) {
+    if (!results) return;
+    results.replaceChildren();
+
+    for (const item of items) {
+      const article = document.createElement("article");
+      article.className = "search-result";
+
+      const title = document.createElement("h2");
+      const link = document.createElement("a");
+      link.href = item.url;
+      link.textContent = item.title;
+      title.append(link);
+
+      const description = document.createElement("p");
+      description.textContent = item.description;
+
+      const meta = document.createElement("p");
+      meta.className = "search-result-meta";
+      meta.textContent = `${item.date} · ${item.tags.join(", ")}`;
+
+      article.append(title, description, meta);
+      results.append(article);
+    }
+  }
+
+  function search() {
+    if (!input || !status) return;
+    const query = input.value.trim().toLowerCase();
+
+    if (!query) {
+      renderResults([]);
+      status.textContent = "Start typing to search all published posts.";
+      return;
+    }
+
+    const matches = searchItems
+      .map((item) => ({ item, score: scoreItem(item, query) }))
+      .filter((match) => match.score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map((match) => match.item);
+
+    renderResults(matches);
+    status.textContent =
+      matches.length === 0
+        ? "No matching posts."
+        : `${matches.length} ${matches.length === 1 ? "result" : "results"}.`;
+  }
+
+  async function loadSearchData() {
+    if (!status || !input) return;
+
+    try {
+      const response = await fetch("/search-data.json");
+      if (!response.ok) throw new Error("Search data request failed.");
+      searchItems = await response.json();
+      input.addEventListener("input", search);
+
+      const initialQuery = new URLSearchParams(window.location.search).get("q");
+      if (initialQuery) {
+        input.value = initialQuery;
+        search();
+      }
+    } catch {
+      status.textContent = "Search is unavailable right now.";
+      input.disabled = true;
+    }
+  }
+
+  loadSearchData();
+</script>
+
+<style>
+  .search-box label {
+    display: block;
+    margin-bottom: 0.45rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+
+  .search-box input {
+    width: 100%;
+    padding: 0.8rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    outline: none;
+    background: var(--surface);
+    color: var(--text);
+  }
+
+  .search-box input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 18%, transparent);
+  }
+
+  .search-status {
+    min-height: 1.5rem;
+    margin: 0.65rem 0 1.5rem;
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+
+  .search-results :global(.search-result) {
+    padding: 1.25rem 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .search-results :global(.search-result h2) {
+    margin: 0 0 0.35rem;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.35rem;
+  }
+
+  .search-results :global(.search-result h2 a) {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .search-results :global(.search-result p) {
+    margin: 0.25rem 0;
+  }
+
+  .search-results :global(.search-result-meta) {
+    color: var(--muted);
+    font-size: 0.8rem;
+  }
+</style>

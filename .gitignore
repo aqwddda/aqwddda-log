@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.astro/
+.npm-cache/
+.vercel/
+.playwright-cli/
+.playwright-data/
+.playwright-browsers/
+output/
+AGENTS.md
+DEVELOPMENT_STEPS.md
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+Thumbs.db

@@ -1,0 +1,139 @@
+---
+import type { MarkdownHeading } from "astro";
+import type { Post } from "../utils/posts";
+import { formatDate, getPostUrl, getReadingTime } from "../utils/posts";
+import BaseLayout from "./BaseLayout.astro";
+import TableOfContents from "../components/TableOfContents.astro";
+import TagList from "../components/TagList.astro";
+
+interface Props {
+  post: Post;
+  headings: MarkdownHeading[];
+  previousPost?: Post;
+  nextPost?: Post;
+}
+
+const { post, headings, previousPost, nextPost } = Astro.props;
+---
+
+<BaseLayout title={post.data.title} description={post.data.description} type="article">
+  <article>
+    <header class="post-header">
+      <h1>{post.data.title}</h1>
+      <p class="post-description">{post.data.description}</p>
+      <div class="post-meta">
+        <span>{formatDate(post.data.date)}</span>
+        <span aria-hidden="true">·</span>
+        <span>{getReadingTime(post)}</span>
+        <span aria-hidden="true">·</span>
+        <span>{post.data.author}</span>
+      </div>
+      <TagList tags={post.data.tags} />
+    </header>
+
+    <TableOfContents headings={headings} />
+
+    <div class="prose">
+      <slot />
+    </div>
+
+    {
+      (previousPost || nextPost) && (
+        <nav class="post-navigation" aria-label="Post navigation">
+          <div>
+            {previousPost && (
+              <>
+                <span>Previous</span>
+                <a href={getPostUrl(previousPost)}>{previousPost.data.title}</a>
+              </>
+            )}
+          </div>
+          <div class="next">
+            {nextPost && (
+              <>
+                <span>Next</span>
+                <a href={getPostUrl(nextPost)}>{nextPost.data.title}</a>
+              </>
+            )}
+          </div>
+        </nav>
+      )
+    }
+  </article>
+</BaseLayout>
+
+<style>
+  .post-header {
+    margin-bottom: 2rem;
+  }
+
+  .post-header h1 {
+    margin: 0 0 0.8rem;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 2.5rem;
+    line-height: 1.16;
+    letter-spacing: -0.025em;
+  }
+
+  .post-description {
+    margin: 0 0 1rem;
+    color: var(--muted);
+    font-size: 1.08rem;
+  }
+
+  .post-meta {
+    display: flex;
+    margin-bottom: 0.9rem;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    color: var(--muted);
+    font-size: 0.84rem;
+  }
+
+  .post-navigation {
+    display: grid;
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .post-navigation div {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .post-navigation .next {
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .post-navigation span {
+    color: var(--muted);
+    font-size: 0.76rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .post-navigation a {
+    color: var(--text);
+    font-family: Georgia, "Times New Roman", serif;
+    text-decoration: none;
+  }
+
+  @media (max-width: 560px) {
+    .post-header h1 {
+      font-size: 2rem;
+    }
+
+    .post-navigation {
+      grid-template-columns: 1fr;
+    }
+
+    .post-navigation .next {
+      align-items: flex-start;
+      text-align: left;
+    }
+  }
+</style>

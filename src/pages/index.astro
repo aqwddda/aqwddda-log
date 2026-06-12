@@ -1,0 +1,55 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PostCard from "../components/PostCard.astro";
+import { siteConfig } from "../config";
+import { getPosts } from "../utils/posts";
+
+const posts = await getPosts();
+const recentPosts = posts.slice(0, 5);
+---
+
+<BaseLayout title={siteConfig.name} description={siteConfig.description}>
+  <section class="home-intro">
+    <h1>{siteConfig.homeTitle}</h1>
+    <p>
+      I'm a recommendation system engineer. This blog is where I record technical notes,
+      project retrospectives, and lessons learned from building real-world AI
+      applications.
+    </p>
+    <p>
+      Find the source and ongoing work on
+      <a href={siteConfig.repositoryUrl} target="_blank" rel="noreferrer">GitHub</a>.
+    </p>
+  </section>
+
+  <section aria-labelledby="recent-posts">
+    <h2 id="recent-posts" class="section-heading">Recent posts</h2>
+    {
+      recentPosts.length > 0 ? (
+        recentPosts.map((post) => <PostCard post={post} />)
+      ) : (
+        <p class="empty-state">No published posts yet.</p>
+      )
+    }
+  </section>
+</BaseLayout>
+
+<style is:inline>
+  .home-intro {
+    max-width: 100%;
+  }
+
+  .home-intro h1 {
+    margin: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 32px;
+    line-height: 1.12;
+    letter-spacing: -0.035em;
+  }
+
+  @media (max-width: 640px) {
+    .home-intro h1 {
+      font-size: 2rem;
+    }
+  }
+</style>
