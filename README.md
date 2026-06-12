@@ -1,74 +1,68 @@
 # Aqwddda Log
 
-A minimal, content-first technical blog built with Astro, TypeScript, and
-Markdown/MDX. It is intended for long-term notes about recommendation systems,
-RAG, search, retrieval, and AI engineering.
+网站地址：[https://aqwddda-log.vercel.app](https://aqwddda-log.vercel.app)
 
-## Requirements
+GitHub：[https://github.com/aqwddda/aqwddda-log](https://github.com/aqwddda/aqwddda-log)
 
-- Node.js 22.12.0 or newer
-- npm 10 or newer
+Aqwddda Log 是一个使用 Astro、TypeScript 和 Markdown/MDX 构建的静态技术博客，用于长期记录推荐系统、RAG 和 AI Engineering 实践。
 
-The repository includes `.nvmrc`. If you use nvm:
+## Tech Stack
 
-```bash
-nvm use
-```
+- Astro 6
+- TypeScript
+- Markdown / MDX
+- Vercel
+- GitHub Actions
 
 ## Local Development
 
-Install dependencies and start the development server:
+环境要求：
+
+- Node.js 22.12.0+
+- npm 10+
+
+安装依赖并启动开发服务器：
 
 ```bash
 npm ci
 npm run dev
 ```
 
-Astro prints the local URL, normally `http://localhost:4321`.
+默认访问地址为 `http://localhost:4321`。
 
-Other useful commands:
+常用命令：
 
 ```bash
-npm run build
-npm run preview
-npm run check
-npm run format:check
-npm run verify
+npm run dev           # 启动开发服务器
+npm run build         # 构建静态网站到 dist/
+npm run preview       # 预览生产构建
+npm run check         # 运行 Astro 和 TypeScript 检查
+npm run format:check  # 检查代码格式
+npm run verify        # 运行完整发布检查
 ```
-
-- `npm run build` generates the static site in `dist/`.
-- `npm run preview` serves the production build locally.
-- `npm run check` runs Astro and TypeScript diagnostics.
-- `npm run format:check` checks formatting without changing files.
-- `npm run verify` runs formatting, type, and production build checks.
 
 ## Project Structure
 
 ```text
 src/
-  components/        Reusable navigation, post, tag, search, and theme UI
-  content/posts/     Markdown and MDX articles
-  layouts/           Shared page and article layouts
-  pages/             Static routes, search data, and RSS
-  styles/            Global light and dark theme styles
-  config.ts          Site name, URL, author, navigation, and GitHub links
-  content.config.ts  Post frontmatter schema
+  components/        通用 UI 组件
+  content/posts/     Markdown 和 MDX 文章
+  layouts/           页面与文章 Layout
+  pages/             页面 Routes、Search Data 和 RSS
+  styles/            Global Styles 与主题
+  config.ts          Site Config
+  content.config.ts  Content Collection Schema
 ```
 
-Repository-level formatting rules live in `.editorconfig`, `.gitattributes`,
-and `.prettierrc.mjs`. GitHub Actions runs the same release checks on pushes
-and pull requests to `main`.
+## Writing
 
-## Add A Post
-
-Create a `.md` or `.mdx` file under `src/content/posts`. The filename becomes
-the public slug.
+在 `src/content/posts` 中创建 `.md` 或 `.mdx` 文件。文件名会成为文章 URL 的 slug。
 
 ```md
 ---
-title: "Post title"
-date: 2026-06-11
-description: "A short summary used in lists and metadata."
+title: "文章标题"
+date: 2026-06-12
+description: "用于文章列表和 metadata 的简短摘要。"
 tags:
   - RAG
   - AI Engineering
@@ -76,92 +70,62 @@ author: Aqwddda
 draft: false
 ---
 
-Write the article here.
+在这里编写文章正文。
 ```
 
-Supported frontmatter:
+Frontmatter 字段：
 
-- `title`: required string
-- `date`: required date
-- `description`: required string
-- `tags`: array of strings, defaults to an empty array
-- `author`: required string
-- `draft`: boolean, defaults to `false`
+- `title`：文章标题
+- `date`：发布日期
+- `description`：文章摘要
+- `tags`：标签数组
+- `author`：作者
+- `draft`：是否为草稿，默认为 `false`
 
-Draft posts are excluded from production pages, search data, RSS, and sitemap
-output. Run `npm run verify` before publishing.
+Draft 不会进入生产页面、Search Index、RSS 或 sitemap。
 
-Markdown and MDX support syntax-highlighted code blocks and math:
+Markdown 和 MDX 支持代码高亮与数学公式：
 
 ```md
-Inline math: $a^2 + b^2 = c^2$
+行内公式：$a^2 + b^2 = c^2$
 
 $$
 \operatorname{score}(q, d) = q \cdot d
 $$
 ```
 
-## Change Site Information
+## Site Configuration
 
-Edit `src/config.ts` to change:
+网站信息集中在 `src/config.ts`：
 
-- site name and description
-- canonical site URL
-- author name
-- personal GitHub profile URL
-- project repository URL
-- navigation items
+- Site Name 与 Description
+- Canonical URL
+- Author
+- GitHub Profile 与 Repository URL
+- Navigation
 
-The Astro configuration, page metadata, RSS feed, and sitemap all derive their
-site URL from this configuration.
+修改正式域名时，只需更新 `siteConfig.url`。页面 metadata、Open Graph、RSS 和 sitemap 会自动使用新的 URL。
 
-## Push To GitHub
+## Deployment
 
-The public repository is:
+项目部署在 Vercel，并由 GitHub `main` 分支自动触发 Production Deployment。
 
-[github.com/aqwddda/aqwddda-log](https://github.com/aqwddda/aqwddda-log)
-
-For later changes:
-
-```bash
-git add .
-git commit -m "Describe the change"
-git push
-```
-
-## Deploy To Vercel
-
-1. Push the project to GitHub.
-2. In Vercel, choose **Add New Project** and import `aqwddda-log`.
-3. Vercel should detect Astro automatically.
-4. Use `npm run build` as the build command and `dist` as the output directory
-   if Vercel does not fill them automatically.
-5. Set the Node.js version to 22.x or newer.
-6. Deploy the project.
-
-No environment variables, database, server adapter, or serverless functions
-are required. A `vercel.json` file is not needed for the static deployment.
-
-The initial canonical URL is:
+Vercel 配置：
 
 ```text
-https://aqwddda-log.vercel.app
+Framework Preset: Astro
+Production Branch: main
+Node.js Version: 22.x
+Build Command: npm run build
+Output Directory: dist
+Environment Variables: None
 ```
 
-If Vercel assigns a different project URL, update `src/config.ts` before the
-final production deployment.
+项目为纯静态输出，不需要 Database、Server Adapter 或 Serverless Functions。
 
-## Add A Custom Domain
+绑定 Custom Domain 后，需要同步更新 `src/config.ts` 中的 `siteConfig.url`，再提交到 `main` 触发重新部署。
 
-1. Open the Vercel project and go to **Settings > Domains**.
-2. Add the domain or subdomain.
-3. Apply the DNS records shown by Vercel at your DNS provider.
-4. Wait for Vercel to verify the records and issue HTTPS.
-5. Replace `siteConfig.url` in `src/config.ts` with the final `https://` URL.
-6. Rebuild and redeploy so canonical links, Open Graph metadata, RSS, and the
-   sitemap use the custom domain.
-
-## Publishing Checklist
+## Release Check
 
 ```bash
 npm ci
@@ -169,9 +133,8 @@ npm run verify
 npm run preview
 ```
 
-Check the new article, its tag pages, search results, `/rss.xml`, and
-`/sitemap-index.xml` before pushing.
+发布前检查文章页面、Tags、Search、`/rss.xml` 和 `/sitemap-index.xml`。
 
 ## License
 
-The project is available under the [MIT License](LICENSE).
+[MIT License](LICENSE)
